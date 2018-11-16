@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/home.css">
     <script src="env.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
 </head>
 <body>
 <div class="page-container">
@@ -17,25 +18,27 @@
             <a class="active" href="./index.html">&lt;dev-duel&gt;</a>
         </div>
         <nav>
-            <a href="inspect.html">inspect</a>
-            <a href="./duel.html">duel</a>
+            <a class="inspect" href="inspect.html">inspect</a>
+            <a class="duel" href="./duel.html">duel</a>
         </nav>
     </header>
-    <main>
+    <main id="main-index">
         <span>dev-duel</span>
         <hr>
         <section>
             <div class="link-container">
                 <span>Judge someone's competence</span>
-                <button onclick="location.href='inspect.html'">inspect</button>
+                <button class="inspect">inspect</button>
             </div>
             <div class="link-container">
                 <span>Ultimate test of developer egos</span>
-                <button class="duel" onclick="location.href='./duel.html'">duel</button>
+                <button class="duel">duel</button>
             </div>
         </section>
     </main>
 </div>
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+<script src="./js/jquery-ui.min.js"> </script>
+<script src="./js/sounds.js" type="text/javascript"></script>
 </body>
 </html>

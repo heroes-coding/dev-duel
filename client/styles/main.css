@@ -3,11 +3,34 @@ body {
     width: 100vw;
     height: 100vh;
 
-    font-family: "Fira Code", serif;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 16px;
 }
 
 .hide {
-    display: none !important;
+    opacity: 0;
+}
+
+main {
+    background: url(../fight.png) no-repeat fixed;
+    background-position-x: center;
+    background-position-y: 55pt;
+}
+
+.stat .value {
+    justify-content: flex-end;
+    text-align: right;
+}
+
+.hide-immediate {
+    display: none;
+}
+
+.error {
+    font-size: 1.3em;
+    color: red;
+    margin: 0 25pt !important;
+    text-align: center;
 }
 
 .page-container {
@@ -30,17 +53,29 @@ main {
     display: flex;
     flex-direction: column;
     height: 90%;
+    border: 2pt dashed #333;    
+}
 
-    border-radius: 4px;
-    background-color: #FFFFFF;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+
+
+.avatar {
+    max-width: 200pt;
+    padding: 2px;
+    background: #ccc;
+    border: 1px dotted #333;
+    margin: 40px 0;
+}
+
+.user-results {
+    max-width: 400pt;
+    margin: auto;
+    margin-bottom: 50pt;
+    text-align: center;
 }
 
 main hr {
     margin: 0 24px;
-    border-color: #555555;
-    background-color: #555555;
-    color: #555555;
+    border-top: 2pt dashed #333 !important;
 }
 
 main > span {
@@ -53,7 +88,6 @@ main > span {
     font-size: 56px;
 
     color: #111;
-    font-family: 'Helvetica Neue', sans-serif;
     letter-spacing: 2px;
     line-height: 1;
 }
@@ -82,11 +116,12 @@ a.active {
 
 button {
     color: #111111;
-    background: transparent;
-    border: 2px solid #111111;
-    border-radius: 4px;
+    background: white;
+    border: 2px dashed #111111;
     transition-duration: 0.2s;
     text-transform: uppercase;
+    width: 120pt;
+    margin-top: 20pt;
 }
 
 button:hover {
@@ -97,6 +132,7 @@ button:hover {
 
 input {
     text-align: center;
+    border: 2px dashed;
 }
 
 input::-webkit-input-placeholder {

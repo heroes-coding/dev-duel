@@ -21,13 +21,6 @@ main .link-container button {
     padding: 14px 28px;
 }
 
-main hr {
-    margin: 0 24px;
-    border-color: #555555;
-    background-color: #555555;
-    color: #555555;
-}
-
 button.duel:hover {
     background-color: red;
 }

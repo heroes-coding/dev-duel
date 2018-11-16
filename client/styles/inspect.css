@@ -7,17 +7,6 @@ form > * {
     margin: 8px auto;
 }
 
-main hr {
-    margin: 0 24px;
-    border-color: #555555;
-    background-color: #555555;
-    color: #555555;
-}
-
-button {
-    width: 120px;
-}
-
 span.username {
     font-weight: bold;
 }
@@ -39,9 +28,6 @@ span.username {
 }
 
 .stat .label {
-    justify-content: flex-end;
-}
-
-.stat .value {
     justify-content: flex-start;
 }
+

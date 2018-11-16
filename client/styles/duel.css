@@ -17,9 +17,6 @@ form input {
     margin: 4px 4px;
 }
 
-button {
-    width: 120px;
-}
 
 button:hover {
     background-color: red;
@@ -56,7 +53,20 @@ span.username {
     white-space: nowrap;
 }
 
-.stat .value {
-    justify-content: flex-end;
-    white-space: nowrap;
+
+
+
+.user-results {
+    padding: 50px 50px 20px 50px;
+}
+
+.outcome {
+    margin-top: 50pt;
+}
+
+.winner {
+    border: 5px dotted green;
+}
+.loser {
+    border: 5px solid red;
 }

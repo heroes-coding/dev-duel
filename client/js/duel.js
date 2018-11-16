@@ -1,10 +1,118 @@
 /* eslint-disable no-undef */
-/*
-  TODO
-  Fetch 2 user's github data and display their profiles side by side
-  If there is an error in finding user or both users, display appropriate error
-  message stating which user(s) doesn't exist
+const USER_CLASSES = ['.left', '.right']
+const roundPlayer = () => {
+  let round = 0
+  return () => {
+    const roundSound = new Audio('sounds/round.mp3')
+    roundSound.play()
+    const listener = roundSound.addEventListener('ended', () => {
+      round = round === 9 ? 9 : round + 1
+      roundSound.removeEventListener('ended', listener)
+      new Audio(`sounds/${round}.mp3`).play()
+    })
+  }
+}
+const playRound = roundPlayer()
 
-  It is up to the student to choose how to determine a 'winner'
-  and displaying their profile/stats comparison in a way that signifies who won.
- */
+const populateUser = (leftOrRight, userData) => {
+  const {
+    username,
+    name,
+    location,
+    email,
+    bio,
+    avatarUrl,
+    titles,
+    favoriteLanguage,
+    publicRepos,
+    totalStars,
+    highestStarred,
+    perfectRepos,
+    followers,
+    following
+  } = userData
+  let score = 0
+  score += titles.length * 15
+  score += following / 2
+  score += followers
+  score += publicRepos * 1.5
+  score += totalStars
+  score += perfectRepos * 0.5
+  score += name ? 5 : 0
+  // default avatar means less points
+  score += avatarUrl === 'https://avatars3.githubusercontent.com/u/34743335?v=4' ? 0 : 5
+  score += bio ? 5 : 0
+  score += email ? 2 : 0
+  score += location ? 2 : 0
+  $(`${leftOrRight} > ` + '.username').html(username)
+  $(`${leftOrRight} > ` + '.full-name').html(name)
+  $(`${leftOrRight} > ` + '.location').html(location)
+  $(`${leftOrRight} > ` + '.email').html(email)
+  $(`${leftOrRight} > ` + '.bio').html(bio)
+  $(`${leftOrRight} > ` + '.avatar')[0].src = avatarUrl
+  $(`${leftOrRight} > .stats > .stat ` + '.titles').html(titles.length ? titles.join(', ') : 'No titles')
+  $(`${leftOrRight} > .stats > .stat ` + '.favorite-language').html(favoriteLanguage || 'Unknown')
+  $(`${leftOrRight} > .stats > .stat ` + '.total-stars').html(totalStars)
+  $(`${leftOrRight} > .stats > .stat ` + '.highest-starred').html(highestStarred)
+  $(`${leftOrRight} > .stats > .stat ` + '.public-repos').html(publicRepos)
+  $(`${leftOrRight} > .stats > .stat ` + '.perfect-repos').html(perfectRepos)
+  $(`${leftOrRight} > .stats > .stat ` + '.followers').html(followers)
+  $(`${leftOrRight} > .stats > .stat ` + '.following').html(following)
+  return score
+}
+
+const addError = message => {
+  $('.duel-error').removeClass('hide-immediate')
+  $('.duel-container').addClass('hide')
+  $('.error').html('Both users need user names')
+  new Audio('sounds/haha.mp3').play()
+}
+
+$('form').submit((e) => {
+  $('.duel-container').addClass('hide', 1000, 'swing')
+  const leftUser = $('input[name=username-left]').val()
+  const rightUser = $('input[name=username-right]').val()
+  if (!leftUser || !rightUser) {
+    addError('Both users need user names')
+    return false
+  }
+  const leftPromise = fetch(`${USER_URL}/${leftUser}`)
+  const rightPromise = fetch(`${USER_URL}/${rightUser}`)
+  const usernames = [leftUser, rightUser]
+  Promise.all([leftPromise, rightPromise]).then(data => {
+    const errors = []
+    for (let i = 0; i < 2; i++) {
+      const response = data[i]
+      if (response.status === 400) {
+        errors.push(`Invalid username: [${usernames[i]}]`)
+      } else if (response.status === 404) {
+        errors.push(`[${usernames[i]}] could not be found`)
+      } else if (response.status !== 200) {
+        console.log(response)
+        errors.push(`Unknown error for: [${usernames[i]}]`)
+      }
+    }
+    if (errors.length) {
+      addError(errors.join(' and '))
+      return false
+    }
+    Promise.all(data.map(d => d.json())).then(([leftData, rightData]) => {
+      const leftScore = populateUser(USER_CLASSES[0], leftData)
+      const rightScore = populateUser(USER_CLASSES[1], rightData)
+      const winner = leftScore >= rightScore ? 0 : 1
+      const scores = [leftScore, rightScore]
+      $(USER_CLASSES[winner]).addClass('winner')
+      $(USER_CLASSES[1 - winner]).removeClass('winner')
+      $(`${USER_CLASSES[winner]} > .outcome`).html(`Winner: ${scores[winner]} points`)
+      $(`${USER_CLASSES[1 - winner]} > .outcome`).html(`Loser: ${scores[1 - winner]} points`)
+      $('.duel-error').addClass('hide-immediate')
+      $('.duel-container').removeClass('hide', 1000, 'swing')
+      playRound()
+    })
+  }).catch(e => {
+    // this is an unexpected error
+    addError(e.message)
+    console.log(e)
+  })
+  return false // return false to prevent default form submission
+})
