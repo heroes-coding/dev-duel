@@ -13,6 +13,11 @@ form .input-container {
     flex-wrap: wrap;
 }
 
+#audioHolder {
+    border: 2px dashed #333;
+    margin: -20pt 0 20pt 0;
+}
+
 form input {
     margin: 4px 4px;
 }
@@ -65,8 +70,5 @@ span.username {
 }
 
 .winner {
-    border: 5px dotted green;
-}
-.loser {
-    border: 5px solid red;
+    border: 5px dashed green;
 }
