@@ -68,6 +68,51 @@ const addError = message => {
   new Audio('sounds/haha.mp3').play()
 }
 
+const addResultAudio = (winner, leftData, rightData, leftScore, rightScore) => {
+  const userDatas = [leftData, rightData]
+  const winnerName = `${userDatas[winner].name || userDatas[winner].username}`
+  const winnerTitles = userDatas[winner].titles.join(' ')
+  const winnerTitle = winnerName.split(' ')[0] + (winnerTitles ? ` the ${winnerTitles}` : '')
+  const loserName = userDatas[1 - winner].name || userDatas[1 - winner].username
+  const loserTitles = userDatas[1 - winner].titles.join(' ')
+  const loserTitle = loserName.split(' ')[0] + (loserTitles ? ` the ${loserTitles}` : '')
+  const spread = Math.abs(leftScore - rightScore)
+  let verb
+  if (spread < 5) {
+    verb = 'nudges ahead of'
+  } else if (spread < 10) {
+    verb = 'beats'
+  } else if (spread < 20) {
+    verb = 'pummels'
+  } else {
+    verb = 'eviscerates'
+  }
+  const resultText = `${winnerTitle} ${verb} ${loserTitle} by ${spread} points`
+  console.log({resultText})
+  // a temporary api I set up (exposed only to Pilgrim's ip address) to allow text to speech conversion
+  fetch(`http://52.18.68.127:3030/text`, {
+    method: 'post',
+    body: JSON.stringify({'text': resultText}),
+    headers: {
+      'Accept': 'audio/wav',
+      'Content-Type': 'application/json'
+    }
+  }).then(response => response.blob())
+    .then(blob => {
+      const blobObj = window.URL.createObjectURL(blob)
+      const resultAudio = new Audio(blobObj)
+      resultAudio.play()
+      window.resultAudio = resultAudio
+      sound = document.createElement('audio')
+      sound.id = 'audio-player'
+      sound.controls = 'controls'
+      sound.src = blobObj
+      sound.type = 'audio/mpeg'
+      document.getElementById('audioHolder').appendChild(sound)
+    })
+    .catch(err => console.error(err))
+}
+
 $('form').submit((e) => {
   $('#audioHolder').html('')
   $('.duel-container').addClass('hide', 1000, 'swing')
@@ -109,48 +154,7 @@ $('form').submit((e) => {
       $('.duel-error').addClass('hide-immediate')
       $('.duel-container').removeClass('hide', 1000, 'swing')
       playRound()
-      const userDatas = [leftData, rightData]
-      const winnerName = `${userDatas[winner].name || userDatas[winner].username}`
-      const winnerTitles = userDatas[winner].titles.join(' ')
-      const winnerTitle = winnerName.split(' ')[0] + (winnerTitles ? ` the ${winnerTitles}` : '')
-      const loserName = userDatas[1 - winner].name || userDatas[1 - winner].username
-      const loserTitles = userDatas[1 - winner].titles.join(' ')
-      const loserTitle = loserName.split(' ')[0] + (loserTitles ? ` the ${loserTitles}` : '')
-      const spread = Math.abs(leftScore - rightScore)
-      let verb
-      if (spread < 5) {
-        verb = 'nudges ahead of'
-      } else if (spread < 10) {
-        verb = 'beats'
-      } else if (spread < 20) {
-        verb = 'pummels'
-      } else {
-        verb = 'eviscerates'
-      }
-      const resultText = `${winnerTitle} ${verb} ${loserTitle} by ${spread} points`
-      console.log({resultText})
-      // a temporary api I set up (exposed only to Pilgrim's ip address) to allow text to speech conversion
-      fetch(`http://52.18.68.127:3030/text`, {
-        method: 'post',
-        body: JSON.stringify({'text': resultText}),
-        headers: {
-          'Accept': 'audio/wav',
-          'Content-Type': 'application/json'
-        }
-      }).then(response => response.blob())
-        .then(blob => {
-          const blobObj = window.URL.createObjectURL(blob)
-          const resultAudio = new Audio(blobObj)
-          resultAudio.play()
-          window.resultAudio = resultAudio
-          sound = document.createElement('audio')
-          sound.id = 'audio-player'
-          sound.controls = 'controls'
-          sound.src = blobObj
-          sound.type = 'audio/mpeg'
-          document.getElementById('audioHolder').appendChild(sound)
-        })
-        .catch(err => console.error(err))
+      addResultAudio(winner, leftData, rightData, leftScore, rightScore)
     })
   }).catch(e => {
     // this is an unexpected error
